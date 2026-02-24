@@ -1,6 +1,6 @@
 # Host Web Example
 
-Mã nguồn ví dụ cho Host Web sử dụng Vue Framework và VBot SDK
+Mã nguồn mẫu cho Host Web sử dụng Vue Framework và VBot SDK
 
 ## Cài đặt dependencies
 
