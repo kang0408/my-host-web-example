@@ -4,8 +4,8 @@ import {
   hostNotification,
   hostPopup,
   hostThemeParams,
-} from "@vbotma/sdk";
-import { onMounted, ref, watch } from "vue";
+} from '@vbotma/sdk';
+import { onMounted, ref, watch, computed } from 'vue';
 
 const iframeRef = ref(null);
 
@@ -13,32 +13,32 @@ const dialog = ref({});
 const isVisible = ref(false);
 const isIframeVisble = ref(false);
 
-const theme = ref("light");
+const theme = ref('light');
 const lightTheme = {
-  bg_color: "#fff",
-  text_color: "#000",
-  secondary_bg_color: "#ccc",
-  button_color: "#42b883",
-  accent_text_color: "#42b883",
+  bg_color: '#fff',
+  text_color: '#000',
+  secondary_bg_color: '#ccc',
+  button_color: '#42b883',
+  accent_text_color: '#42b883',
 };
 
 const darkTheme = {
-  bg_color: "#000",
-  text_color: "#fff",
-  secondary_bg_color: "#4c4c4c",
-  button_color: "#42b883",
-  accent_text_color: "#42b883",
+  bg_color: '#000',
+  text_color: '#fff',
+  secondary_bg_color: '#4c4c4c',
+  button_color: '#42b883',
+  accent_text_color: '#42b883',
 };
 
 const changeTheme = () => {
-  if (theme.value == "light") {
-    theme.value = "dark";
+  if (theme.value == 'light') {
+    theme.value = 'dark';
   } else {
-    theme.value = "light";
+    theme.value = 'light';
   }
 
   if (iframeRef.value) {
-    const activeThemeData = theme.value === "dark" ? darkTheme : lightTheme;
+    const activeThemeData = theme.value === 'dark' ? darkTheme : lightTheme;
     hostThemeParams.setTheme(activeThemeData);
   }
 };
@@ -49,8 +49,8 @@ const openDialog = () => {
 
 const getButtonText = (btn) => {
   if (btn.text) return btn.text;
-  if (btn.type === "cancel") return "Hủy bỏ"; // Fallback mặc định
-  return "Nút bấm";
+  if (btn.type === 'cancel') return 'Hủy bỏ'; // Fallback mặc định
+  return 'Nút bấm';
 };
 
 const handleAction = (btnId, btnType) => {
@@ -72,10 +72,10 @@ const onIframeLoad = () => {
   }
 
   // 2. Đồng bộ trạng thái theme HIỆN TẠI của Host xuống Mini App
-  const activeThemeData = theme.value === "dark" ? darkTheme : lightTheme;
+  const activeThemeData = theme.value === 'dark' ? darkTheme : lightTheme;
   hostThemeParams.setTheme(activeThemeData);
 
-  console.log("Đã đồng bộ theme xuống iframe:", theme.value);
+  console.log('Đã đồng bộ theme xuống iframe:', theme.value);
 
   hostNotification.onSend((params) => {
     alert(params.message);
@@ -89,12 +89,18 @@ const onIframeLoad = () => {
     console.log(payload);
   });
 };
+
+const themeParams = encodeURIComponent(JSON.stringify(lightTheme));
+
+const iframeSrc = computed(() => {
+  return `/mini-app/index.html#/?vbWebAppPlatform=web&vbWebAppVersion=9.2&vbWebAppThemeParams=${themeParams}`;
+});
 </script>
 
 <template>
   <h2>Host Web</h2>
   <button @click="changeTheme" style="width: fit-content; margin-bottom: 8px">
-    Theme: {{ theme !== "light" ? "Light" : "Dark" }}
+    Theme: {{ theme !== 'light' ? 'Light' : 'Dark' }}
   </button>
   <button @click="toggleIframe" style="width: fit-content; margin-bottom: 8px">
     Toggle Iframe
@@ -102,7 +108,7 @@ const onIframeLoad = () => {
   <iframe
     v-if="isIframeVisble"
     ref="iframeRef"
-    src="/dist/index.html"
+    :src="iframeSrc"
     style="width: 100%; border: none; flex: 1"
     sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
     allow="camera; microphone; geolocation"
